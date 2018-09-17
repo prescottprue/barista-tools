@@ -29,7 +29,7 @@ stdin.on('end', () => {
       isString(process.env.TEST_ARGS) &&
       process.env.TEST_ARGS.includes('useStage=true');
     const baristaApiInstance = baristaApiUtils.createBaristaApiInstance({ useStage });
-    const runResult = data === '0' || data === 0 || data.includes('0') ? 'passed' : 'failed';
+    const runResult = data === '0' || data === 0 ? 'passed' : 'failed';
     console.log(`Writing status "${runResult}" to /runs/sendResult`); // eslint-disable-line no-console
     baristaApiInstance.post('/runs/sendResult', {
       jobRunKey: process.env.JOB_RUN_KEY || Date.now(),
