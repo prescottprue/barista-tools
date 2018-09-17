@@ -1,4 +1,4 @@
-import BaristaSdk from '../src';
+import BaristaSdk from 'index';
 
 describe('barista-tools', () => {
   it('exists', () => {

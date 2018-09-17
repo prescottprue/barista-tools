@@ -1,6 +1,6 @@
 {
   "name": "barista-tools",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Command line library and tools to simplify communication with barista test running service.",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -14,7 +14,6 @@
     "watch": "npm run build:commonjs -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "postinstall": "npm run build",
     "preversion": "npm run build",
     "prepare": "npm run build"
   },
