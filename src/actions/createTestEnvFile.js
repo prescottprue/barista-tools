@@ -18,9 +18,13 @@ const testConfigFullPath = path.join(
 );
 const testEnvFileFullPath = path.join(DEFAULT_BASE_PATH, DEFAULT_TEST_ENV_FILE_PATH);
 const serviceAccountPath = path.join(DEFAULT_BASE_PATH, DEFAULT_SERVICE_ACCOUNT_PATH);
+
 const prefixesByCiEnv = {
+  master: 'INT_',
   staging: 'STAGE_',
-  production: 'PROD_'
+  test: 'TEST_',
+  'int-b': 'INT_B_',
+  'int-c': 'INT_C_'
 };
 
 /**
@@ -30,8 +34,12 @@ const prefixesByCiEnv = {
  */
 function getEnvPrefix() {
   return (
-    prefixesByCiEnv[process.env.CI_ENVIRONMENT_SLUG] || prefixesByCiEnv.staging
+    prefixesByCiEnv[process.env.BRANCH_NAME] || prefixesByCiEnv[process.env.CI_ENVIRONMENT_SLUG] || prefixesByCiEnv.staging
   );
+}
+
+function getEnvNameFromBranch() {
+  return !process.env.BRANCH_NAME || process.env.BRANCH_NAME === 'master' ? 'int' : process.env.BRANCH_NAME;
 }
 
 /**
@@ -100,6 +108,14 @@ function getServiceAccount() {
     console.log('local service account being loaded from ./serviceAccount.json');
     return require(serviceAccountPath); // eslint-disable-line global-require, import/no-dynamic-require
   }
+
+  // Check for fallback local service account (when naming is serviceAccount-int.json or similar)
+  const backServiceAccountPath = path.join(DEFAULT_BASE_PATH, `serviceAccount-${getEnvNameFromBranch()}.json`);
+  if (fs.existsSync(backServiceAccountPath)) {
+    console.log(`local service account being loaded from ${backServiceAccountPath}`);
+    return require(backServiceAccountPath); // eslint-disable-line global-require, import/no-dynamic-require
+  }
+
   console.log(
     'Service Account file does not exist locally, falling back to environment variables'
   );

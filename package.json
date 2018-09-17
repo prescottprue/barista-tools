@@ -1,6 +1,6 @@
 {
   "name": "barista-tools",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Command line library and tools to simplify communication with barista test running service.",
   "main": "lib/index.js",
   "module": "es/index.js",
