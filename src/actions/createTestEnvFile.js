@@ -168,25 +168,28 @@ export default function createTestEnvFile() {
     return Promise.reject(new Error(errMsg));
   }
 
-  // Handle service account not matching settings in config.json (local)
-  if (serviceAccount.project_id !== FIREBASE_PROJECT_ID) {
-    return Promise.reject(new Error(
-      'Service account project_id does not match provided FIREBASE_PROJECT_ID'
-    ));
-  }
-
   // Get project ID from environment variable
   const projectId =
     process.env.GCLOUD_PROJECT || envVarBasedOnCIEnv('FIREBASE_PROJECT_ID');
-    // Initialize Firebase app with service account
+
+  // Remove firebase- prefix
+  const cleanedProjectId = projectId.replace('firebase-', '');
+
+  // Handle service account not matching settings in config.json (local)
+  if (serviceAccount.project_id !== FIREBASE_PROJECT_ID && serviceAccount.project_id !== projectId) {
+    console.log(`Warning: project_id "${serviceAccount.project_id}" does not match env var: "${envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')}"`);
+  }
+
+  // Initialize Firebase app with service account
   const appFromSA = admin.initializeApp(
     {
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: `https://${projectId}.firebaseio.com`
+      databaseURL: `https://${cleanedProjectId}.firebaseio.com`
     },
       'withServiceAccount'
     );
-    // Create auth token
+
+  // Create auth token
   return appFromSA
     .auth()
     .createCustomToken(uid, { isTesting: true })
@@ -217,6 +220,7 @@ export default function createTestEnvFile() {
           serviceAccountPath,
           JSON.stringify(serviceAccount, null, 2)
         );
+
         console.log('Service account created successfully');
       }
       return customToken;
