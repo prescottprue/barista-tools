@@ -1,0 +1,29 @@
+{
+  "presets": [
+    ["env",{
+      "targets": {
+        "node": "6.11"
+      }
+    }]
+  ],
+  "plugins": [
+    "add-module-exports",
+    "transform-object-rest-spread",
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ]
+      }
+    ]
+  ],
+  "env": {
+    "es": {
+      "comments": false
+    },
+    "commonjs": {
+      "comments": false
+    }
+  }
+}
